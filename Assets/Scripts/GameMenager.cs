@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class GameMenager : MonoBehaviour {
 
@@ -15,8 +15,9 @@ public class GameMenager : MonoBehaviour {
                 -ściany
     */
 
+    private List<Transform> fallenBlocks=new List<Transform>();
     private FallingElement blockCallingNextTurn = null;
-    private bool isGameOver = true;
+    private bool isGameOver = false;
 
     void Awake()//Implementacja singletona
     {
@@ -59,7 +60,8 @@ public class GameMenager : MonoBehaviour {
 
     private void ChceckLines()
     {
-        ///TODO
+        //Y: -4.5 -3.5 -2.5 -1.5 ... startY <- kolejne rzędy do sprawdzenia
+        fallenBlocks.BinarySearch
     }
 
     private void ChceckIfGameOver()
@@ -77,13 +79,19 @@ public class GameMenager : MonoBehaviour {
 
     private void decreaseTurnTime()
     {
-        turnTime = turnTime - (turnTime / turnAcceleration);
+        turnTime = turnTime - turnTime * turnAcceleration;
     }
 
     public void SetNextTurn(FallingElement elementCalling)
     {
+        RegisterFallenBlocks(elementCalling);
         blockCallingNextTurn = elementCalling;
     }
 
+    void RegisterFallenBlocks(FallingElement elementCalling)
+    {
+        Transform[] transforms = elementCalling.GetComponentsInChildren<Transform>();
+        fallenBlocks.AddRange(transforms);//dodaje transforms do fallenBlocks
+    }
     
 }

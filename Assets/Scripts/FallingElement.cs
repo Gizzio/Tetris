@@ -9,17 +9,16 @@ public class FallingElement : MonoBehaviour {
 
     private float turnTime;
     private float timer = 0;
-    private bool fallen = false;
+    private float speededTurn = 0.1f;
     
     void Start()
     {
         turnTime = GameMenager.instance.turnTime;
+       
     }
 
 	void Update ()
     {
-        if (!fallen)
-        {
             UpdateTimer();
             if (Input.GetKeyDown(KeyCode.LeftArrow) && CanMove(Vector2.left))
             {
@@ -29,12 +28,21 @@ public class FallingElement : MonoBehaviour {
             {
                 transform.Translate(1f, 0, 0);
             }
+            
+            if(Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                turnTime = speededTurn;
+            }
+
+            if (Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                turnTime = GameMenager.instance.turnTime;
+            }
 
             if (timer > turnTime)
             {
                 TryToMoveDown();
             }
-        }
 	}
 
     void TryToMoveDown()
@@ -46,19 +54,18 @@ public class FallingElement : MonoBehaviour {
         }
         else
         {
-            fallen = true;
-
-           
             GameMenager.instance.SetNextTurn(this);
         }
     }
+
+   
 
     void UpdateTimer()
     {
         timer += Time.deltaTime;
     }
 
-    bool CanMove(Vector2 direction)//TODO: naprawić wykrywanie kolizji(czasem blokuje się na rogach)
+    bool CanMove(Vector2 direction)//TODO: naprawić wykrywanie kolizji(przy l i w)
     {
         TurnCollidersOnOff(false);
         bool isSpace = LineCast(direction);
@@ -83,8 +90,8 @@ public class FallingElement : MonoBehaviour {
 
     bool LineCast(Vector2 direction)
     {
-        Transform[] positions=GetComponentsInChildren<Transform>();
-        foreach(Transform trans in positions)
+        Transform[] transforms=GetComponentsInChildren<Transform>();
+        foreach(Transform trans in transforms)
         {
             Vector2 start = trans.position;
             Vector2 end = start + direction;
@@ -99,9 +106,5 @@ public class FallingElement : MonoBehaviour {
 
     }
 
-    void SetTurnTime(float time)
-    {
-        turnTime = time;
-    }
 
 }
