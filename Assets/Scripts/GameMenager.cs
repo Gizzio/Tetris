@@ -61,7 +61,7 @@ public class GameMenager : MonoBehaviour {
     private void ChceckLines()
     {
         //Y: -4.5 -3.5 -2.5 -1.5 ... startY <- kolejne rzędy do sprawdzenia
-        fallenBlocks.BinarySearch
+        //fallenBlocks.BinarySearch
     }
 
     private void ChceckIfGameOver()
