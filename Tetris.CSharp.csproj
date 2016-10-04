@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Explosion.cs" />
     <Compile Include="Assets\Scripts\FallingElement.cs" />
     <Compile Include="Assets\Scripts\GameMenager.cs" />
   </ItemGroup>

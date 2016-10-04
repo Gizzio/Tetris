@@ -10,23 +10,42 @@ public class FallingElement : MonoBehaviour {
     private float turnTime;
     private float timer = 0;
     private float speededTurn = 0.1f;
+    private bool canTurn;
     
     void Start()
     {
+        ChangeColors();
         turnTime = GameMenager.instance.turnTime;
+        speededTurn = GameMenager.instance.speededTurn;
        
     }
 
-	void Update ()
+    void FixedUpdate()
+    {
+        canTurn = true;
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        canTurn = false;
+        Debug.Log("Alert!");
+    }
+
+    void Update ()
     {
             UpdateTimer();
             if (Input.GetKeyDown(KeyCode.LeftArrow) && CanMove(Vector2.left))
             {
-                transform.Translate(-1f, 0, 0);
+                Move(Vector2.left);
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow) && CanMove(Vector2.right))
             {
-                transform.Translate(1f, 0, 0);
+                Move(Vector2.right);
+            }
+            
+            if(Input.GetKeyDown(KeyCode.Space) && CanTurnAround() )
+            {
+                TurnAround();
             }
             
             if(Input.GetKeyDown(KeyCode.DownArrow))
@@ -49,7 +68,8 @@ public class FallingElement : MonoBehaviour {
     {
         if(CanMove(Vector2.down))
         {
-            MoveDown();
+            ChangeColors();
+            Move(Vector2.down);
             timer = 0;
         }
         else
@@ -58,14 +78,24 @@ public class FallingElement : MonoBehaviour {
         }
     }
 
-   
+    void TurnAround()
+    {
+        GetComponent<Rigidbody2D>().MoveRotation(90f + GetComponent<Rigidbody2D>().rotation);
+    }
+
+    bool CanTurnAround()
+    {
+        TurnAround();
+
+        return canTurn;
+    }
 
     void UpdateTimer()
     {
         timer += Time.deltaTime;
     }
 
-    bool CanMove(Vector2 direction)//TODO: naprawić wykrywanie kolizji(przy l i w)
+    bool CanMove(Vector2 direction)
     {
         TurnCollidersOnOff(false);
         bool isSpace = LineCast(direction);
@@ -73,9 +103,10 @@ public class FallingElement : MonoBehaviour {
         return isSpace;
     }
 
-    void MoveDown()
+    void Move(Vector2 direction)
     {
-        transform.Translate(0, -1f, 0);
+        GetComponent<Rigidbody2D>().MovePosition((Vector2)transform.position + direction);
+      
     }
 
     void TurnCollidersOnOff(bool state)
@@ -101,9 +132,18 @@ public class FallingElement : MonoBehaviour {
                 return false;
             }
         }
-
         return true;
+    }
 
+    void ChangeColors()
+    {
+        SpriteRenderer[] renders = GetComponentsInChildren<SpriteRenderer>();
+
+        foreach( SpriteRenderer rend in renders)
+        {
+            Color col = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+            rend.color = col;
+        }
     }
 
 
