@@ -15,9 +15,8 @@ public class GameMenager : MonoBehaviour {
     public Object explosion;
     /*TODO: 
                 -punktacja
-                -sprawdzanie kolizji przed obrotem
-
-                
+                -sprawdzanie końca gry
+                -przerobienie nowej tury na event
     */
 
     private FallingElement blockCallingNextTurn = null;
@@ -68,10 +67,28 @@ public class GameMenager : MonoBehaviour {
             SpawnNewBlock();
     }
 
+    private void ChceckIfGameOver()
+    {
+        Vector2 start = new Vector2((width / 2) - 0.5f, topY+0.5f);
+        Vector2 end = new Vector2((-width / 2) + 0.5f, topY+0.5f);
+        RaycastHit2D hit = Physics2D.Linecast(start, end);
+        if (hit.collider != null)
+        {
+            isGameOver = false;
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("GAME OVER");
+        //TODO: wyświetla napis "game over" i wyświetla wynik, proponuje ponowną grę
+    }
+
     private void SpawnNewBlock()
     {
         Vector3 startPoint = new Vector3(0, topY);
-        if (Random.Range(0, 2) == 0)
+        if (Random.Range(0, 2) == 0)//spawnuje zwykly blok, lub jego lustrzane odbicie
         {
             Instantiate(blocks[Random.Range(0, 4)], startPoint, Quaternion.identity);
         }
@@ -115,7 +132,7 @@ public class GameMenager : MonoBehaviour {
 
     private void FallBlocksAbove(float y)
     {
-        GameObject[] blocks=GameObject.FindGameObjectsWithTag("SmallBlock");
+        GameObject[] blocks=GameObject.FindGameObjectsWithTag( "SmallBlock" );
 
         foreach(GameObject obj in blocks)
         {
@@ -128,10 +145,6 @@ public class GameMenager : MonoBehaviour {
         }
     }
 
-    private void ChceckIfGameOver()
-    {
-        //TODO
-    }
 
     private void decreaseTurnTime()
     {

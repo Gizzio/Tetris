@@ -14,6 +14,7 @@ public class FallingElement : MonoBehaviour {
     
     void Start()
     {
+        canTurn = true;
         ChangeColors();
         turnTime = GameMenager.instance.turnTime;
         speededTurn = GameMenager.instance.speededTurn;
@@ -22,13 +23,23 @@ public class FallingElement : MonoBehaviour {
 
     void FixedUpdate()
     {
-        canTurn = true;
+        //canTurn = true;
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        canTurn = false;
-        Debug.Log("Alert!");
+        if (!other.transform.IsChildOf(transform))
+        {
+            canTurn = false;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (!other.transform.IsChildOf(transform))
+        {
+            canTurn = true;
+        }
     }
 
     void Update ()
@@ -43,7 +54,7 @@ public class FallingElement : MonoBehaviour {
                 Move(Vector2.right);
             }
             
-            if(Input.GetKeyDown(KeyCode.Space) && CanTurnAround() )
+            if(Input.GetKeyDown(KeyCode.Space) && canTurn )
             {
                 TurnAround();
             }
@@ -83,12 +94,7 @@ public class FallingElement : MonoBehaviour {
         GetComponent<Rigidbody2D>().MoveRotation(90f + GetComponent<Rigidbody2D>().rotation);
     }
 
-    bool CanTurnAround()
-    {
-        TurnAround();
 
-        return canTurn;
-    }
 
     void UpdateTimer()
     {
